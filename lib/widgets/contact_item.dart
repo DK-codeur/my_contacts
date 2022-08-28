@@ -26,8 +26,9 @@ class ContactItem extends StatelessWidget {
             contentPadding: EdgeInsets.zero,
             leading: CircleAvatar(
               radius: 24,
+              backgroundColor: const Color(0xFFc31432),
               child: CircleAvatar(
-                // child: Icon(Icons.person),
+                backgroundColor: const Color(0xFF240b36),
                 radius: 23,
                 backgroundImage: NetworkImage("${picture?.medium}")
               ),
