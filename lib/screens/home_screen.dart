@@ -18,6 +18,10 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
 
+  Future<void> _refresh(BuildContext context) async {
+    await Provider.of<DataProvider>(context, listen: false).fetchAndSetUsers();
+  }
+
   Shimmer buildShimmer(double w, double h) {
     return Shimmer.fromColors(
       baseColor: Colors.grey.shade300,
@@ -132,19 +136,29 @@ class _HomeScreenState extends State<HomeScreen> {
                   
 
                 } else if(snapshot.connectionState == ConnectionState.done) {
-                  List<User> users = snapshot.requireData;
-
-                  return ListView.builder(
-                    physics: const BouncingScrollPhysics(),
-                    itemBuilder: (BuildContext context, int i) {
-                      return ContactItem(
-                        id: users[i].id, picture: users[i].picture, name: users[i].name, gender: users[i].gender,
-                        onTap: () => Navigator.push(
-                          context, 
-                          MaterialPageRoute(builder: (context) => ContactScreen(user: users[i],))
-                        ),
-                      );
-                    }
+                  List<User> users = snapshot.data?? [];
+                  return  RefreshIndicator(
+                    onRefresh: () => _refresh(context),
+                    child: users.isNotEmpty  ? ListView.builder(
+                      physics: const BouncingScrollPhysics(),
+                      itemBuilder: (BuildContext context, int i) {
+                        return ContactItem(
+                          id: users[i].id, picture: users[i].picture, name: users[i].name, gender: users[i].gender,
+                          onTap: () => Navigator.push(
+                            context, 
+                            MaterialPageRoute(builder: (context) => ContactScreen(user: users[i],))
+                          ),
+                        );
+                      }
+                     ) : ConstrainedBox(
+                       constraints: BoxConstraints(minHeight: MediaQuery.of(context).size.height-80),
+                       child: GestureDetector(
+                        onTap: () => setState(() { }),
+                         child: const Center(
+                          child: Chip(label: Text("Tap to refresh"))
+                          ),
+                       )
+                     )
                   );
 
                 } else {

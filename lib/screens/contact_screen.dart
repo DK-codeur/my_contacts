@@ -92,7 +92,7 @@ class _ContactScreenState extends State<ContactScreen> {
                         height: 80,
                         width: 90,
                         decoration: BoxDecoration(
-                            color: Colors.blue,
+                            color: const Color(0xFFc31432),
                             image: DecorationImage(
                                 fit: BoxFit.cover,
                                 image: NetworkImage(

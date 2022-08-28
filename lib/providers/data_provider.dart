@@ -19,23 +19,29 @@ class DataProvider with ChangeNotifier{
       final response = await http.get(Uri.parse(url));
       if(response.body == null)  {
         return null;
+      } else {
+        debugPrint('get:' + '${response.statusCode}');
+        
+        if (response.body.isNotEmpty) {
+          
+          final extractedData = json.decode(response.body);
+          List results = extractedData["results"];
+          // debugPrint("============== Data fetched");
+          final List<User> loadedUser = [];
+          for (var i = 0; i < results.length; i++) {
+            var userItem = User.fromJson(results[i]); 
+            loadedUser.add(userItem);
+          }
+
+          _user = loadedUser;
+          notifyListeners();
+
+          return _user;
+        }
+
       }
+      
 
-      debugPrint('get:' + '${response.statusCode}');
-      final extractedData = json.decode(response.body);
-
-      List results = extractedData["results"];
-      // debugPrint("============== Data fetched");
-      final List<User> loadedUser = [];
-      for (var i = 0; i < results.length; i++) {
-        var userItem = User.fromJson(results[i]); 
-        loadedUser.add(userItem);
-      }
-
-      _user = loadedUser;
-      notifyListeners();
-
-      return _user;
 
   }
 
@@ -69,7 +75,5 @@ class DataProvider with ChangeNotifier{
   User postById(int id) {
     return _user.firstWhere((post) => post.id == id);
   }
-
-  int totalContacts() => _user.length;
 
 }
